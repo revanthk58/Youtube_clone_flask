@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Frontend.css">
+    <title>YOUtube</title>
+</head>
+<body>
+    <div class="container">
+        <form id="downloadForm" class="text-center">
+            <label for="link" class="heading">Video Link:</label>
+            <input type="url" id="link" name="link" required placeholder="Enter video URL here">
+            <br>
+            <button type="submit" class="button" id="downloadButton">Click</button>
+            <div class="spinner" id="spinner"></div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('downloadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const button = document.getElementById('downloadButton');
+            const spinner = document.getElementById('spinner');
+            button.disabled = true; // Disable the button
+            spinner.classList.add('active'); // Start the spinner
+            
+            const formData = new FormData(event.target);
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5000/download', {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                alert(`Download complete! Filename: ${result.filename}`);
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                button.disabled = false; // Enable the button again
+                spinner.classList.remove('active'); // Stop the spinner
+            }
+        });
+    </script>
+</body>
+</html>
